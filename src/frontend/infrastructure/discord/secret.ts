@@ -5,9 +5,11 @@ dotenv.configSync({
   path: "../../../../.env",
 })
 
+const config = Deno.env.toObject();
+
 export const Secret = {
-  DISCORD_TOKEN: Deno.env.get("DISCORD_BOT_TOKEN")!,
-  DISCORD_CLIENT_ID: Deno.env.get("DISCORD_CLIENT_ID")!,
-  DISCORD_GUILD_ID: Deno.env.get("DISCORD_GUILD_ID")!,
-  CINII_APP_ID: Deno.env.get("CINII_APP_ID")!,
+  DISCORD_TOKEN: config["DISCORD_BOT_TOKEN"],
+  DISCORD_CLIENT_ID: config["DISCORD_CLIENT_ID"],
+  DISCORD_GUILD_ID: config["DISCORD_GUILD_ID"],
+  CINII_APP_ID: config["CINII_APP_ID"],
 }
