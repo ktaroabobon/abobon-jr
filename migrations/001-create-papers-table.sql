@@ -1,7 +1,6 @@
--- Up migration
-CREATE TABLE IF NOT EXISTS paper
+CREATE TABLE IF NOT EXISTS papers
 (
-    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    id               INT AUTO_INCREMENT PRIMARY KEY,
     title            TEXT,
     authors          TEXT,
     publication_date TEXT,
@@ -11,5 +10,5 @@ CREATE TABLE IF NOT EXISTS paper
     naid             TEXT,
     url              TEXT NOT NULL,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

@@ -24,8 +24,8 @@ const bot = createBot({
   },
 });
 
-const _paperSearchService = new PaperSearchServiceImpl();
-const paperRepository = new PaperRepositoryImpl("../../../../papers.db");
+const connectionString = "mysql---"
+const paperRepository = new PaperRepositoryImpl(connectionString);
 const rssItemRepository = new RssItemRepositoryImpl();
 const RSS_FEED_URL = "https://ktaroabobon.github.io/index.xml";
 
@@ -96,10 +96,12 @@ bot.events.interactionCreate = async (b, interaction) => {
         type: InteractionResponseTypes.DeferredChannelMessageWithSource,
       });
 
-      const papers = await new SearchPapersUseCase(
+      await papaerRepository.connect();
+      await new SearchPapersUseCase(
         new PaperSearchServiceImpl(Secret.CINII_APP_ID),
         paperRepository
       ).execute(keywords.join(" "));
+      await paperRepository.disconnect();
 
       console.log(`Found ${papers.length} papers`);
 
