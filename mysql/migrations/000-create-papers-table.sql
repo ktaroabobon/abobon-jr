@@ -1,5 +1,7 @@
-CREATE TABLE IF NOT EXISTS papers
-(
+CREATE DATABASE IF NOT EXISTS abobonjr;
+USE abobonjr;
+
+CREATE TABLE IF NOT EXISTS papers (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     title            TEXT,
     authors          TEXT,

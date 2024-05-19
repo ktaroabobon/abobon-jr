@@ -1,8 +1,8 @@
-import {dotenv} from "./deps.ts"
+import {dotenv} from "../../deps.ts"
 
 dotenv.configSync({
   export: true,
-  path: "../../../../.env",
+  path: "../../.env",
 })
 
 const config = Deno.env.toObject();
