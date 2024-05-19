@@ -1,11 +1,18 @@
-export interface Paper {
-  id?: number;
-  title: string;
-  authors: string;
-  publicationDate: string;
-  publisher: string;
-  publicationName: string;
-  doi: string;
-  naid: string;
-  url: string;
+// Import DenoDB components
+import { DataTypes, Model } from "../../../deps.ts";
+
+// Define the Paper model
+class Paper extends Model {
+  static table = "papers";
+  static fields = {
+    id: { primaryKey: true, autoIncrement: true },
+    title: DataTypes.STRING,
+    authors: DataTypes.STRING,
+    publicationDate: DataTypes.DATE,
+    publisher: DataTypes.STRING,
+    publicationName: DataTypes.STRING,
+    doi: DataTypes.STRING,
+    naid: DataTypes.STRING,
+    url: DataTypes.STRING,
+  };
 }

@@ -1,6 +1,6 @@
 import {RssItemRepository} from "../../domain/repositories/rssItem.repository.ts";
 import {RssItem} from "../../domain/entities/rssItem.entity.ts";
-import {parseFeed, DublinCore} from "https://deno.land/x/rss/mod.ts";
+import {parseFeed, DublinCore} from "../../../../deps.ts";
 
 export class RssItemRepositoryImpl implements RssItemRepository {
   async fetchLatestItems(url: string, limit: number): Promise<RssItem[]> {

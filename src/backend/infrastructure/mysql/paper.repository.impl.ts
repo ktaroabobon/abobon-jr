@@ -1,43 +1,39 @@
-import {PaperRepository} from "../../domain/repositories/paper.repository.ts";
-import {Paper} from "../../domain/entities/paper.entity.ts";
-import {Client} from "https://deno.land/x/mysql@v2.10.2/mod.ts";
+import { Paper } from "../../domain/entities/paper.entity.ts";
+import { PaperRepository } from "../../domain/repositories/paper.repository.ts";
+import { Database, MySQLConnector } from "../../../deps.ts";
 
 export class PaperRepositoryImpl implements PaperRepository {
-  private client: Client;
+  private db: Database;
 
   constructor(private readonly connectionString: string) {
-    this.client = new Client();
+    this.db = new Database(new MySQLConnector({
+      uri: connectionString,
+    }));
+    this.db.link([Paper]);
   }
 
   async connect() {
-    await this.client.connect(this.connectionString);
+    await this.db.sync();
   }
 
   async disconnect() {
-    await this.client.close();
+    await this.db.close();
   }
 
   async findByDoi(doi: string): Promise<Paper | undefined> {
-    const result = await this.client.execute(
-      "SELECT * FROM papers WHERE doi = ?",
-      [doi]
-    );
-    return result.rows?.[0] as Paper | undefined;
+    return await Paper.where({ doi }).first();
   }
 
   async save(paper: Paper): Promise<void> {
-    await this.client.execute(
-      "INSERT INTO papers (title, authors, publication_date, publisher, publication_name, doi, naid, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        paper.title,
-        paper.authors,
-        paper.publicationDate,
-        paper.publisher,
-        paper.publicationName,
-        paper.doi,
-        paper.naid,
-        paper.url,
-      ]
-    );
+    await Paper.create({
+      title: paper.title,
+      authors: paper.authors,
+      publicationDate: paper.publicationDate,
+      publisher: paper.publisher,
+      publicationName: paper.publicationName,
+      doi: paper.doi,
+      naid: paper.naid,
+      url: paper.url,
+    });
   }
 }

@@ -1,10 +1,10 @@
-import {createBot, Intents, startBot, CreateSlashApplicationCommand, InteractionResponseTypes} from "./deps.ts";
+import {createBot, Intents, startBot, CreateSlashApplicationCommand, InteractionResponseTypes} from "../../deps.ts";
 import {Secret} from "./secret.ts";
-import {SearchPapersUseCase} from "../../../backend/application/usecases/searchPapers.usecase.ts";
-import {PaperSearchServiceImpl} from "../../../backend/infrastructure/cinii/paperSearch.service.impl.ts";
-import {PaperRepositoryImpl} from "../../../backend/infrastructure/sqlite/paper.repository.impl.ts";
-import {FetchLatestRssItemsUseCase} from "../../../backend/application/usecases/fetchLatestRssItems.usecase.ts";
-import {RssItemRepositoryImpl} from "../../../backend/infrastructure/rss/rssItem.repository.impl.ts";
+import {SearchPapersUseCase} from "../backend/application/usecases/searchPapers.usecase.ts";
+import {PaperSearchServiceImpl} from "../backend/infrastructure/cinii/paperSearch.service.impl.ts";
+import {PaperRepositoryImpl} from "../backend/infrastructure/mysql/paper.repository.impl.ts";
+import {FetchLatestRssItemsUseCase} from "../backend/application/usecases/fetchLatestRssItems.usecase.ts";
+import {RssItemRepositoryImpl} from "../backend/infrastructure/rss/rssItem.repository.impl.ts";
 
 const bot = createBot({
   token: Secret.DISCORD_TOKEN,
