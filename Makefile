@@ -26,7 +26,6 @@ init:
 	fi
 	${make} build
 	${make} up
-	${make} run
 
 .PHONY: build
 build:
