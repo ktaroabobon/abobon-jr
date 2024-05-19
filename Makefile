@@ -24,17 +24,21 @@ init:
 	@if [ -f .env ]; then \
 		grep -q '^[^#]*=' .env || { echo ".envファイルに未設定の環境変数があります。すべての値を埋めてください。" ; exit 1; }; \
 	fi
+	${make} build
+	${make} up
+	${make} run
+
+.PHONY: build
+build:
 	${DOCKER_COMPOSE_IMPL} build
-	${DOCKER_COMPOSE_IMPL} up -d
-	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && go run .'
 
 .PHONY: up
 up:
 	${DOCKER_COMPOSE_IMPL} up -d
 
-.PHONY: build
-build:
-	${DOCKER_COMPOSE_IMPL} build
+.PHONY: run
+run:
+	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && go run .'
 
 .PHONY: down/d
 down/d:
