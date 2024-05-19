@@ -4,9 +4,9 @@ abobon-jrはDiscord Botの名前です。このリポジトリにはabobon-jrの
 
 ## 開始方法
 
-### 1. Dockerをインストールする
+### 1. Docker Desktopをインストールする
 
-まず、Dockerをインストールしてください。インストール方法は[公式サイト](https://www.docker.com/get-started)を参照してください。
+まず、Docker Desktopをインストールしてください。インストール方法は[公式サイト](https://docs.docker.com/desktop/install/mac-install/)を参照してください。
 
 ### 2. リポジトリのクローン
 
