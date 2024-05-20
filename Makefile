@@ -24,8 +24,8 @@ init:
 	@if [ -f .env ]; then \
 		grep -q '^[^#]*=' .env || { echo ".envファイルに未設定の環境変数があります。すべての値を埋めてください。" ; exit 1; }; \
 	fi
-	${make} build
-	${make} up
+	make build
+	make up
 
 .PHONY: build
 build:
