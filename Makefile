@@ -1,4 +1,4 @@
-include .env
+-include .env
 
 SRC_DIR=src
 MIGRATIONS_DIR=migrations
