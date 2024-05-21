@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-    fmt.Println("Hello, world!")
+	fmt.Println("Hello, world!")
 
 	fmt.Println(os.Getenv("MYSQL_DATABASE"))
 }

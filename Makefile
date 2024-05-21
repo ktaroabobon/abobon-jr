@@ -18,14 +18,14 @@ cp/env:
 init:
 	@if [ ! -f .env ]; then \
 		echo ".envファイルが存在しません。.envファイルを作成します。"; \
-		make cp/env; \
+		${MAKE} cp/env; \
 		echo "新しい.envファイルが作成されました。必要な環境変数を設定してください。"; \
 	fi
 	@if [ -f .env ]; then \
 		grep -q '^[^#]*=' .env || { echo ".envファイルに未設定の環境変数があります。すべての値を埋めてください。" ; exit 1; }; \
 	fi
-	make build
-	make up
+	${MAKE} build
+	${MAKE} up
 
 .PHONY: build
 build:
@@ -63,6 +63,11 @@ app/logs:
 db/logs:
 	${DOCKER_COMPOSE_IMPL} logs db
 
+# DBのデータを削除しないようにappのみ再起動する
+.PHONY: rebuild
+rebuild:
+	${MAKE} rebuild/app
+
 .PHONY: rebuild/app
 rebuild/app:
 	${DOCKER_COMPOSE_IMPL} build app
@@ -72,3 +77,11 @@ rebuild/app:
 rebuild/db:
 	${DOCKER_COMPOSE_IMPL} build db
 	${DOCKER_COMPOSE_IMPL} up -d db
+
+.PHONY: fmt
+fmt:
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gofmt -d -w .'
+
+.PHONY: lint
+lint:
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'golangci-lint run'
