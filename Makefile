@@ -84,4 +84,4 @@ fmt:
 
 .PHONY: lint
 lint:
-	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'golangci-lint run'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'golangci-lint run --config .golangci.yaml'
