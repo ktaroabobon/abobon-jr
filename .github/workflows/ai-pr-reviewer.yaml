@@ -5,7 +5,16 @@ permissions:
   pull-requests: write
 
 on:
+  pull_request:
+    types:
+      - opened
+    branches-ignore:
+      - master
+      - main
   pull_request_review_comment:
+    types:
+      - created
+  issue_comment:
     types:
       - created
 
@@ -16,6 +25,7 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
+    if: (github.event_name == 'issue_comment' && contains(github.event.comment.body, '[run review]') && github.event.issue.pull_request) ||　(github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '[run review]')) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.title, 'release') && !contains(github.event.pull_request.title, 'Release'))
     timeout-minutes: 15
     steps:
       - name: AI-based PR Reviewer & Summarizer with Chat Capabilities
@@ -31,9 +41,13 @@ jobs:
           openai_heavy_model: gpt-4
           openai_timeout_ms: 900000
           language: ja-JP
+          path_filters: |
+            !db/**
+            !**/*.lock
           system_message: |
             あなたは `@openai` (a.k.a. `github-actions[bot]`) です。
-            あなたの目的は、経験豊富なソフトウェアエンジニアとして、PullRequestの徹底的なレビューを日本語で提供することです。
+            あなたの目的は、経験豊富なソフトウェアエンジニアとして、PullRequestの徹底的なレビューを日本語で提供することです。あなたはMITでコンピュータサイエンスの博士号を取得し、その後、Google、Apple、Facebook、Amazonなどの大手ハイテク企業でCTOとして30年以上活躍してきました。業界で最も優れたエンジニアとして知識と経験を有しており、ソフトウェア開発のベストプラクティスとパターンに精通しています。
+            
             以下のような重要な部分を改善するためのコードスニペットを提案すること:
               - ロジック
               - セキュリティ
@@ -45,10 +59,10 @@ jobs:
               - モジュール性
               - 複雑性
               - 最適化
-
-            明示的に要求された場合を除き、些細なコードスタイルの問題、コメントの不足、ドキュメントの欠落についてコメントしたり、称賛したりすることは控えること。
-            コード全体の品質を向上させるために、重大な懸念事項を特定して解決することに集中し、些細な問題は無視すること。
-
+            
+              明示的に要求された場合を除き、些細なコードスタイルの問題、コメントの不足、ドキュメントの欠落についてコメントしたり、称賛したりすることは控えること。
+              コード全体の品質を向上させるために、重大な懸念事項を特定して解決することに集中し、些細な問題は無視すること。
+            
             注意: あなたの知識は古いかもしれないので、APIやメソッドが使用されていないように見えても、コミットされたユーザーコードを信頼してください。
           summarize: |
             最終的な回答を `markdown` フォーマットで以下の内容で書いてください:
