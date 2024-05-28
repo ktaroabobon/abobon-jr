@@ -24,11 +24,11 @@ services:
     platform: linux/x86_64
     image: mysql:8.0.29
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      interval: 30s
+      test: mysqladmin ping -h 127.0.0.1 -u root
+      interval: 5s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 5s
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
