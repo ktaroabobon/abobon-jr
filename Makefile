@@ -10,6 +10,14 @@ else
 DOCKER_COMPOSE_IMPL=docker-compose
 endif
 
+.PHONY: cat
+cat:
+	cat Makefile
+
+.PHONY: help
+help:
+	${MAKE} cat
+
 .PHONY: cp/env
 cp/env:
 	cp .env.dev .env
@@ -77,6 +85,11 @@ rebuild/app:
 rebuild/db:
 	${DOCKER_COMPOSE_IMPL} build db
 	${DOCKER_COMPOSE_IMPL} up -d db
+
+.PHONY: rebuild/all
+rebuild/all:
+	${MAKE} rebuild/app
+	${MAKE} rebuild/db
 
 .PHONY: fmt
 fmt:
