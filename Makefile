@@ -46,6 +46,7 @@ up:
 .PHONY: run
 run:
 	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && go run .'
+	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gci write -s standard -s default -s "prefix(github.com/daixiang0/gci)" .'
 
 .PHONY: down/d
 down/d:

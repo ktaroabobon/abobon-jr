@@ -8,6 +8,8 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/go/src/app
+    env_file:
+      - .env
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
