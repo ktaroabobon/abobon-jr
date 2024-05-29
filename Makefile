@@ -46,7 +46,6 @@ up:
 .PHONY: run
 run:
 	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && go run .'
-	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gci write -s standard -s default -s "prefix(github.com/daixiang0/gci)" .'
 
 .PHONY: down/d
 down/d:
@@ -95,6 +94,7 @@ rebuild/all:
 .PHONY: fmt
 fmt:
 	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gofmt -d -w .'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gci write -s standard -s default -s "prefix(github.com/daixiang0/gci)" .'
 
 .PHONY: lint
 lint:
