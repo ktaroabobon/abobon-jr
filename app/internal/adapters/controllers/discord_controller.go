@@ -49,8 +49,8 @@ func (c *DiscordController) handlePingCommand(s *discordgo.Session, i *discordgo
 			Content: "Pong!",
 		},
 	}
-	err := s.InteractionRespond(i.Interaction, response)
 
+	err := s.InteractionRespond(i.Interaction, response)
 	if err != nil {
 		c.Logger.ErrorLogger.Printf("Error responding to ping command: %v", err)
 	}

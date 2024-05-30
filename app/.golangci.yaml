@@ -74,6 +74,12 @@ issues:
   max-same-issues: 0
 
 linters-settings:
+  depguard:
+    list-type: "denylist"
+    packages:
+      # - "github.com/bwmarrin/discordgo" # この行をコメントアウトまたは削除
+    include-go-root: false
+    allow-internal: true
   errcheck:
     exclude-functions:
       - "fmt:.*"
