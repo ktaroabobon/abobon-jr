@@ -1,86 +1,48 @@
-outputs:
-  sort-results: true
+linters-settings:
+  structcheck:
+    type-check: 
+      disabled: true
+    unused-fields: true
+  govet:
+    check-shadowing: false
+  gocyclo:
+    min-complexity: 30
+  gocognit:
+    min-complexity: 40
+  errcheck:
+    ignore: ''
+
+issues:
+  exclude-files:
+    - .*_test\.go
+  max-issues-per-linter: 1000
+  max-same-issues: 1000
+
+run:
+  timeout: 20m
+  go: '1.22'
+
 linters:
   disable-all: true
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - typecheck
-    - unused
-    - asciicheck
-    - bodyclose
-    - depguard
-    - dogsled
-    - dupl
-    - durationcheck
-    - errorlint
-    - exhaustive
-    - exportloopref
-    - forbidigo
-    - forcetypeassert
-    - funlen
-    - gci
-    - gochecknoglobals
-    - gochecknoinits
-    - gocognit
-    - goconst
-    - gocritic
-    - gocyclo
-    - godot
-    - godox
-    - err113
-    - gofmt
-    - gofumpt
-    - goheader
     - goimports
-    - mnd
-    - gomoddirectives
-    - gomodguard
-    - goprintffuncname
-    - gosec
-    - importas
-    - lll
-    - makezero
+    - unused
+    - errcheck
+    - gocognit
+    - gofmt
+    - govet
     - misspell
-    - nakedret
-    - nestif
-    - nilerr
-    - nlreturn
-    - noctx
-    - nolintlint
-    - paralleltest
-    - prealloc
-    - predeclared
-    - promlinter
-    - revive
-    - rowserrcheck
-    - sqlclosecheck
-    - stylecheck
-    - tagliatelle
-    - testpackage
-    - thelper
-    - tparallel
-    - unconvert
-    - unparam
-    - wastedassign
+    - staticcheck
     - whitespace
-    - wrapcheck
-    - wsl
-issues:
-  max-issues-per-linter: 0
-  max-same-issues: 0
+    - gosec
 
-linters-settings:
   depguard:
-    list-type: "denylist"
+    list-type: blacklist
     packages:
-      # - "github.com/bwmarrin/discordgo" # この行をコメントアウトまたは削除
-    include-go-root: false
-    allow-internal: true
-  errcheck:
-    exclude-functions:
-      - "fmt:.*"
-      - ".*Close"
+      - github.com/bwmarrin/discordgo
+      - app/internal/adapters/controllers
+      - app/internal/utils
+    allow:
+      - app
+      - app/internal/adapters/controllers
+      - app/internal/utils

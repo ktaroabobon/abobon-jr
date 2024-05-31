@@ -93,9 +93,8 @@ rebuild/all:
 
 .PHONY: fmt
 fmt:
-	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'goimports -l -w .'
-	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gci write -s standard -s default -s "prefix(github.com/daixiang0/gci)" .'
-	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gofumpt -l -w .'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go fmt .'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'goimports -w .'
 
 .PHONY: lint
 lint:
