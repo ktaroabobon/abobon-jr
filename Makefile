@@ -93,7 +93,8 @@ rebuild/all:
 
 .PHONY: fmt
 fmt:
-	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'gofmt -d -w .'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go fmt .'
+	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'goimports -w .'
 
 .PHONY: lint
 lint:
