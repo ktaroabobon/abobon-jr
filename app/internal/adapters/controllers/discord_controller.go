@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"app/internal/utils"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/mmcdole/gofeed"
@@ -79,20 +78,22 @@ func (c *DiscordController) handleArticleCommand(s *discordgo.Session, i *discor
 		return
 	}
 
+	var embeds []*discordgo.MessageEmbed
+
 	// 最新の5件の記事を表示
-	content := "Latest articles:\n"
 	for i, item := range items {
 		if i >= 5 {
 			break
 		}
-		content += fmt.Sprintf("[%d] %s\n", i+1, item.Title)
+		embed := c.createArticleEmbed(item)
+		embeds = append(embeds, embed)
 	}
 
 	// TODO: レスポンス部分
 	response := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: content,
+			Embeds: embeds,
 		},
 	}
 
@@ -109,4 +110,36 @@ func fetchRSS(url string) ([]*gofeed.Item, error) {
 		return nil, err
 	}
 	return feed.Items, nil
+}
+
+func (c *DiscordController) createArticleEmbed(item *gofeed.Item) *discordgo.MessageEmbed {
+	summary := c.summarizeContent(item.Description) // 要約を作成する関数を呼び出す
+
+	return &discordgo.MessageEmbed{
+		Color:       0x00ff00, // 緑色
+		Title:       item.Title,
+		URL:         item.Link,
+		Description: summary,
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:   "Published on",
+				Value:  item.Published,
+				Inline: true,
+			},
+		},
+	}
+}
+
+// 要約を作成する関数
+func (c *DiscordController) summarizeContent(content string) string {
+	var sectionText string
+
+	if sectionText == "" {
+		const maxSummaryLength = 200
+		if len(content) > maxSummaryLength {
+			return content[:maxSummaryLength] + "..." // 最初の200文字までを要約として返す
+		}
+	}
+
+	return sectionText + "..."
 }
