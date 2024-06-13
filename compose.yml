@@ -2,7 +2,7 @@ services:
   app:
     container_name: abobonjr_app
     build:
-      context: ./
+      context: .
       dockerfile: ./docker/app/Dockerfile
     ports:
       - "8000:8000"

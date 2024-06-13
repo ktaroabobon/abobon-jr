@@ -10,13 +10,33 @@ else
 DOCKER_COMPOSE_IMPL=docker-compose
 endif
 
-.PHONY: cat
-cat:
-	cat Makefile
 
 .PHONY: help
 help:
-	${MAKE} cat
+	@echo "利用可能なmakeコマンド:"
+	@echo "  cat         : Makefileの内容を表示します"
+	@echo "  cp/env      : .env.devファイルを.envにコピーします"
+	@echo "  init        : .envファイルを作成し、コンテナをビルドおよび起動します"
+	@echo "  build       : Dockerコンテナをビルドします"
+	@echo "  up          : Dockerコンテナを起動します"
+	@echo "  run         : Dockerコンテナ内でアプリケーションを実行します"
+	@echo "  down/d      : Dockerコンテナを停止および削除します"
+	@echo "  app/login   : アプリケーションコンテナにログインします"
+	@echo "  db/login    : データベースコンテナにログインします"
+	@echo "  db/client   : データベースコンテナ内でMySQLクライアントを開きます"
+	@echo "  app/logs    : アプリケーションコンテナのログを表示します"
+	@echo "  db/logs     : データベースコンテナのログを表示します"
+	@echo "  rebuild     : アプリケーションコンテナのみ再ビルドします"
+	@echo "  rebuild/app : アプリケーションコンテナを再ビルドして起動します"
+	@echo "  rebuild/db  : データベースコンテナを再ビルドして起動します"
+	@echo "  rebuild/all : アプリケーションコンテナとデータベースコンテナの両方を再ビルドして起動します"
+	@echo "  fmt         : go fmtおよびgoimportsを使用してGoコードをフォーマットします"
+	@echo "  lint        : Goコードに対してリンターを実行します"
+	@echo "  ci          : CIのためにfmtおよびlintのターゲットを実行します"
+
+.PHONY: cat
+cat:
+	cat Makefile
 
 .PHONY: cp/env
 cp/env:
@@ -45,7 +65,7 @@ up:
 
 .PHONY: run
 run:
-	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && go run .'
+	${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'go mod tidy && air -c .air.toml'
 
 .PHONY: down/d
 down/d:
@@ -99,3 +119,8 @@ fmt:
 .PHONY: lint
 lint:
 	@${DOCKER_COMPOSE_IMPL} exec app /bin/sh -c 'golangci-lint run --config .golangci.yaml'
+
+.PHONY: ci
+ci:
+	${MAKE} fmt
+	${MAKE} lint

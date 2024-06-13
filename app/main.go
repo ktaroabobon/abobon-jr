@@ -5,48 +5,66 @@ import (
 	"os/signal"
 	"syscall"
 
-	"app/internal/adapters/controllers"
+	"app/internal/controllers"
+	"app/internal/repositories"
+	"app/internal/services"
 	"app/internal/utils"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/mmcdole/gofeed"
 )
 
 func main() {
-	// ロガーの作成
+	logger, discordController, err := setup()
+	if err != nil {
+		logger.ErrorLogger.Fatalf("Error setting up bot: %v", err)
+		return
+	}
+
+	// コマンドの登録
+	discordController.RegisterCommands()
+
+	logger.InfoLogger.Println("Bot is now running. Press CTRL+C to exit.")
+
+	// シグナルを受け取るまで待機
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-stop
+
+	// Discordセッションのクローズ
+	discordController.Session.Close()
+}
+
+func setup() (*utils.Logger, *controllers.DiscordController, error) {
 	logger := utils.NewLogger()
 
+	// DISCORD_BOT_TOKENの取得
 	token := os.Getenv("DISCORD_BOT_TOKEN")
 	if token == "" {
-		logger.ErrorLogger.Fatal("No DISCORD_BOT_TOKEN provided")
+		logger.ErrorLogger.Fatal("DISCORD_BOT_TOKEN is not set")
 	}
 
+	// Discordセッションの作成
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		logger.ErrorLogger.Fatal("Error creating Discord session: ", err)
+		logger.ErrorLogger.Fatalf("Error creating Discord session: %v", err)
+		return nil, nil, err
 	}
 
-	// Discordコントローラーの作成
-	discordController := controllers.NewDiscordController(dg, logger)
+	// DiscordControllerのインスタンスを作成
+	repo := repositories.NewDiscordRepository(&gofeed.Parser{})
+	discordService := services.NewDiscordService(repo, logger)
+	discordController := controllers.NewDiscordController(dg, discordService)
 
-	// スラッシュコマンドのハンドラを追加
+	// スラッシュコマンドのハンドラを登録
 	dg.AddHandler(discordController.HandleSlashCommands)
 
 	// Discordセッションの開始
 	err = dg.Open()
 	if err != nil {
-		logger.ErrorLogger.Fatal("Error opening Discord session: ", err)
+		logger.ErrorLogger.Fatalf("Error opening Discord session: %v", err)
+		return nil, nil, err
 	}
 
-	// スラッシュコマンドの登録
-	discordController.RegisterCommands()
-
-	logger.InfoLogger.Println("Bot is running. Press CTRL+C to exit.")
-
-	// シグナルを待つ
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-stop
-
-	// Discordセッションのクリーンな終了
-	dg.Close()
+	return logger, discordController, nil
 }
