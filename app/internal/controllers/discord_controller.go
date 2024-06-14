@@ -25,7 +25,7 @@ func NewDiscordController(session *discordgo.Session, logger *utils.Logger) *Dis
 // RegisterCommands関数
 func (c *DiscordController) RegisterCommands() {
 	if c.Session.State == nil || c.Session.State.User == nil {
-		c.Service.Logger.ErrorLogger.Fatal("Discord session state or user is nil")
+		c.Service.Logger.ErrorLogger.Fatal("Discordのセッションの状態またはユーザーがnilです")
 		return
 	}
 

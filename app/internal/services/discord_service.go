@@ -3,6 +3,7 @@ package services
 import (
 	"app/internal/repositories"
 	"app/internal/utils"
+	"fmt"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -37,8 +38,16 @@ func (s *DiscordService) NewArticle(item *gofeed.Item) *Article {
 		Title:       item.Title,
 		Link:        item.Link,
 		Description: summary,
-		PublishedOn: *item.PublishedParsed,
+		PublishedOn: s.safeParsePublishedDate(item.PublishedParsed),
 	}
+}
+
+// PublishedParsedがnilの場合にtime.Time{}を返す関数
+func (s *DiscordService) safeParsePublishedDate(PublishedParsed *time.Time) time.Time {
+	if PublishedParsed != nil {
+		return *PublishedParsed
+	}
+	return time.Time{}
 }
 
 // handlePingCommand関数
@@ -52,7 +61,17 @@ func (s *DiscordService) HandlePingCommand(session *discordgo.Session, interacti
 
 	err := session.InteractionRespond(interaction.Interaction, response)
 	if err != nil {
-		s.Logger.ErrorLogger.Printf("Error responding to ping command: %v", err)
+		s.Logger.ErrorLogger.Printf("Pingコマンドへの応答中にエラーが発生しました: %v", err)
+		response := &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: fmt.Sprintf("Pingコマンドの処理中にエラーが発生しました: %v", err),
+			},
+		}
+		err = session.InteractionRespond(interaction.Interaction, response)
+		if err != nil {
+			s.Logger.ErrorLogger.Printf("エラーメッセージの送信中にエラーが発生しました: %v", err)
+		}
 	}
 }
 
@@ -60,7 +79,7 @@ func (s *DiscordService) HandlePingCommand(session *discordgo.Session, interacti
 func (s *DiscordService) HandleArticleCommand(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 	rssItems, err := s.Repo.FetchRSS("https://ktaroabobon.github.io/index.xml")
 	if err != nil {
-		s.Logger.ErrorLogger.Printf("Error fetching RSS feed: %v", err)
+		s.Logger.ErrorLogger.Printf("RSSフィードの取得中にエラーが発生しました: %v", err)
 		return
 	}
 
@@ -93,7 +112,17 @@ func (s *DiscordService) HandleArticleCommand(session *discordgo.Session, intera
 
 	err = session.InteractionRespond(interaction.Interaction, response)
 	if err != nil {
-		s.Logger.ErrorLogger.Printf("Error responding to article command: %v", err)
+		s.Logger.ErrorLogger.Printf("記事コマンドへの応答中にエラーが発生しました: %v", err)
+		response := &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: fmt.Sprintf("記事コマンドの処理中にエラーが発生しました: %v", err),
+			},
+		}
+		err = session.InteractionRespond(interaction.Interaction, response)
+		if err != nil {
+			s.Logger.ErrorLogger.Printf("エラーメッセージの送信中にエラーが発生しました: %v", err)
+		}
 	}
 }
 
