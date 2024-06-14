@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"app/internal/services"
+	"app/internal/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -11,14 +12,16 @@ type DiscordController struct {
 	Service *services.DiscordService
 }
 
-func NewDiscordController(session *discordgo.Session, service *services.DiscordService) *DiscordController {
+func NewDiscordController(session *discordgo.Session, logger *utils.Logger) *DiscordController {
+	// Service層のインスタンス作成
+	service := services.NewDiscordService(logger)
+
 	return &DiscordController{
 		Session: session,
 		Service: service,
 	}
 }
 
-// RegisterCommands and HandleSlashCommands methods go here
 // RegisterCommands関数
 func (c *DiscordController) RegisterCommands() {
 	if c.Session.State == nil || c.Session.State.User == nil {

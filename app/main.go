@@ -6,12 +6,9 @@ import (
 	"syscall"
 
 	"app/internal/controllers"
-	"app/internal/repositories"
-	"app/internal/services"
 	"app/internal/utils"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/mmcdole/gofeed"
 )
 
 func main() {
@@ -52,9 +49,7 @@ func setup() (*utils.Logger, *controllers.DiscordController, error) {
 	}
 
 	// DiscordControllerのインスタンスを作成
-	repo := repositories.NewDiscordRepository(&gofeed.Parser{})
-	discordService := services.NewDiscordService(repo, logger)
-	discordController := controllers.NewDiscordController(dg, discordService)
+	discordController := controllers.NewDiscordController(dg, logger)
 
 	// スラッシュコマンドのハンドラを登録
 	dg.AddHandler(discordController.HandleSlashCommands)

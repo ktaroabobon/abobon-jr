@@ -3,7 +3,6 @@ package services
 import (
 	"app/internal/repositories"
 	"app/internal/utils"
-
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -23,7 +22,10 @@ type DiscordService struct {
 	Logger *utils.Logger
 }
 
-func NewDiscordService(repo *repositories.DiscordRepository, logger *utils.Logger) *DiscordService {
+func NewDiscordService(logger *utils.Logger) *DiscordService {
+	// Repository層のインスタンス作成
+	repo := repositories.NewDiscordRepository(&gofeed.Parser{})
+
 	return &DiscordService{Repo: repo, Logger: logger}
 }
 
@@ -39,7 +41,6 @@ func (s *DiscordService) NewArticle(item *gofeed.Item) *Article {
 	}
 }
 
-// handlePingCommand and handleArticleCommand methods go here
 // handlePingCommand関数
 func (s *DiscordService) HandlePingCommand(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 	response := &discordgo.InteractionResponse{
@@ -98,15 +99,9 @@ func (s *DiscordService) HandleArticleCommand(session *discordgo.Session, intera
 
 // summarizeContent関数
 func (s *DiscordService) summarizeContent(content string) string {
-	var sectionText string
-
-	if sectionText == "" {
-		const maxSummaryLength = 200
-		if len(content) > maxSummaryLength {
-			return content[:maxSummaryLength] + "..."
-			// 200文字以上の場合は、最初の200文字までを返す
-		}
+	const maxSummaryLength = 200
+	if len(content) > maxSummaryLength {
+		return content[:maxSummaryLength] + "..."
 	}
-
-	return sectionText + "..."
+	return content
 }
