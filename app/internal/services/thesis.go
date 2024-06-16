@@ -4,6 +4,7 @@ import (
 	"app/internal/models"
 	"app/internal/repositories"
 	"app/internal/utils"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -83,7 +84,28 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 		}
 
 		// NAIDを抽出
-		NAID := extractIdentifier(item.Identifiers, "cir:NAID")
+		NAID, err := extractIdentifier(item.Identifiers, "cir:NAID")
+		if err != nil {
+			s.Logger.ErrorLogger.Printf("NAIDの解析に失敗しました: %v", err)
+			return discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "NAIDの解析に失敗しました。",
+				},
+			}
+		}
+
+		// DOIを抽出
+		DOI, err := extractIdentifier(item.Identifiers, "cir:DOI")
+		if err != nil {
+			s.Logger.ErrorLogger.Printf("DOIの解析に失敗しました: %v", err)
+			return discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "DOIの解析に失敗しました。",
+				},
+			}
+		}
 
 		// Paper構造体を作成
 		paper := models.Paper{
@@ -93,7 +115,7 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 			PublicationDate: &publicationDate,
 			Publisher:       &item.Publisher,
 			PublicationName: &item.PublicationName,
-			DOI:             extractIdentifier(item.Identifiers, "cir:DOI"),
+			DOI:             DOI,
 			NAID:            &NAID,
 			URL:             item.Link.ID,
 		}
@@ -135,14 +157,15 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 }
 
 // extractIdentifier は特定のタイプの識別子を検索します
+// 識別子が見つからない場合はエラーを返します
 func extractIdentifier(identifiers []struct {
 	Type  string `json:"@type"`
 	Value string `json:"@value"`
-}, idType string) string {
+}, idType string) (string, error) {
 	for _, id := range identifiers {
 		if id.Type == idType {
-			return id.Value
+			return id.Value, nil
 		}
 	}
-	return ""
+	return "", fmt.Errorf("識別子 %s が見つかりません", idType)
 }
