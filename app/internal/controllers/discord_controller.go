@@ -32,11 +32,11 @@ func (c *DiscordController) RegisterCommands() {
 	commands := []*discordgo.ApplicationCommand{
 		{
 			Name:        "ping",
-			Description: "Replies with pong",
+			Description: "pongと返信します",
 		},
 		{
 			Name:        "abobon-articles",
-			Description: "Fetch the data from https://ktaroabobon.github.io/index.xml with RSS",
+			Description: "https://ktaroabobon.github.io/index.xml からデータを取得します（RSS）",
 		},
 	}
 
