@@ -43,7 +43,7 @@ func (c *DiscordController) RegisterCommands() {
 	for _, cmd := range commands {
 		_, err := c.Session.ApplicationCommandCreate(c.Session.State.User.ID, "", cmd)
 		if err != nil {
-			c.Service.Logger.ErrorLogger.Fatalf("Cannot create '%v' command: %v", cmd.Name, err)
+			c.Service.Logger.ErrorLogger.Fatalf("'%v'コマンドを作成できませんでした: %v", cmd.Name, err)
 		}
 	}
 }
