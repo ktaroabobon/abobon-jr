@@ -30,7 +30,12 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 	if err != nil {
 		s.Logger.ErrorLogger.Printf("FetchThesis response: %v", *data)
 		s.Logger.ErrorLogger.Printf("論文検索中にエラーが発生しました: %v", err)
-		return
+		return discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "論文検索中にエラーが発生しました。後ほど再試行してください。",
+			},
+		}
 	}
 
 	var papers []models.Paper
@@ -40,7 +45,12 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 		id, err := strconv.ParseUint(idStr, 10, 64)
 		if err != nil {
 			s.Logger.ErrorLogger.Printf("IDの解析に失敗しました: %v", err)
-			return
+			return discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "IDの解析に失敗しました。",
+				},
+			}
 		}
 
 		// 著者をカンマ区切りに変換
@@ -62,7 +72,12 @@ func (s *ThesisService) HandleThesisCommand(session *discordgo.Session, interact
 			pd, err := time.Parse(layout, item.PublicationDate)
 			if err != nil {
 				s.Logger.ErrorLogger.Printf("出版日の解析に失敗しました: %v", err)
-				return
+				return discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "出版日の解析に失敗しました。",
+					},
+				}
 			}
 			publicationDate = pd
 		}
