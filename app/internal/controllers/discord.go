@@ -12,9 +12,9 @@ type DiscordController struct {
 	Service *services.DiscordService
 }
 
-func NewDiscordController(session *discordgo.Session, logger *utils.Logger) *DiscordController {
+func NewDiscordController(session *discordgo.Session, config *utils.Config, logger *utils.Logger) *DiscordController {
 	// Service層のインスタンス作成
-	service := services.NewDiscordService(logger)
+	service := services.NewDiscordService(config, logger)
 
 	return &DiscordController{
 		Session: session,
@@ -38,6 +38,10 @@ func (c *DiscordController) RegisterCommands() {
 			Name:        "abobon-articles",
 			Description: "https://ktaroabobon.github.io/index.xml からデータを取得します（RSS）",
 		},
+		{
+			Name:        "thesis",
+			Description: "キーワードを指定して論文を検索します",
+		},
 	}
 
 	for _, cmd := range commands {
@@ -51,11 +55,6 @@ func (c *DiscordController) RegisterCommands() {
 // HandleSlashCommands関数
 func (c *DiscordController) HandleSlashCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if i.Type == discordgo.InteractionApplicationCommand {
-		switch i.ApplicationCommandData().Name {
-		case "ping":
-			c.Service.HandlePingCommand(s, i)
-		case "abobon-articles":
-			c.Service.HandleArticleCommand(s, i)
-		}
+		c.Service.HandleInteraction(s, i)
 	}
 }
