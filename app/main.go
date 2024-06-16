@@ -35,21 +35,20 @@ func main() {
 func setup() (*utils.Logger, *controllers.DiscordController, error) {
 	logger := utils.NewLogger()
 
-	// DISCORD_BOT_TOKENの取得
-	token := os.Getenv("DISCORD_BOT_TOKEN")
-	if token == "" {
-		logger.ErrorLogger.Fatal("DISCORD_BOT_TOKENが設定されていません。")
+	// configの読み込み
+	config, err := utils.NewConfig()
+	if err != nil {
+		logger.ErrorLogger.Fatalf("configの読み込み中にエラーが発生しました: %v", err)
 	}
 
 	// Discordセッションの作成
-	dg, err := discordgo.New("Bot " + token)
+	dg, err := discordgo.New("Bot " + config.DiscordBotToken)
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Discordセッションの作成中にエラーが発生しました: %v", err)
-		return nil, nil, err
 	}
 
 	// DiscordControllerのインスタンスを作成
-	discordController := controllers.NewDiscordController(dg, logger)
+	discordController := controllers.NewDiscordController(dg, config, logger)
 
 	// スラッシュコマンドのハンドラを登録
 	dg.AddHandler(discordController.HandleSlashCommands)
@@ -58,7 +57,6 @@ func setup() (*utils.Logger, *controllers.DiscordController, error) {
 	err = dg.Open()
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Discordセッションのオープン中にエラーが発生しました: %v", err)
-		return nil, nil, err
 	}
 
 	return logger, discordController, nil

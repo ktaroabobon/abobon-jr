@@ -14,9 +14,9 @@ type CiNiiRepository struct {
 	Logger     *utils.Logger
 }
 
-func NewCiNiiRepository(appId string, logger *utils.Logger) *CiNiiRepository {
+func NewCiNiiRepository(config *utils.Config, logger *utils.Logger) *CiNiiRepository {
 	return &CiNiiRepository{
-		CiNiiAppId: appId,
+		CiNiiAppId: config.CiniiAppID,
 		Logger:     logger,
 	}
 }

@@ -12,9 +12,9 @@ type DiscordController struct {
 	Service *services.DiscordService
 }
 
-func NewDiscordController(session *discordgo.Session, logger *utils.Logger) *DiscordController {
+func NewDiscordController(session *discordgo.Session, config *utils.Config, logger *utils.Logger) *DiscordController {
 	// Service層のインスタンス作成
-	service := services.NewDiscordService(logger)
+	service := services.NewDiscordService(config, logger)
 
 	return &DiscordController{
 		Session: session,

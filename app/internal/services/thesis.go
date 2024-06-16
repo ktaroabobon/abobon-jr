@@ -4,7 +4,6 @@ import (
 	"app/internal/models"
 	"app/internal/repositories"
 	"app/internal/utils"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -17,8 +16,8 @@ type ThesisService struct {
 	Logger *utils.Logger
 }
 
-func NewThesisService(logger *utils.Logger) *ThesisService {
-	return &ThesisService{Repo: repositories.NewCiNiiRepository(os.Getenv("CINII_APP_ID"), logger), Logger: logger}
+func NewThesisService(config *utils.Config, logger *utils.Logger) *ThesisService {
+	return &ThesisService{Repo: repositories.NewCiNiiRepository(config, logger), Logger: logger}
 }
 
 // handleThesisCommand関数

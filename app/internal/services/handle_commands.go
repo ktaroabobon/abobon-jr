@@ -11,17 +11,19 @@ type DiscordService struct {
 	Session               *discordgo.Session
 	Interaction           *discordgo.InteractionCreate
 	Logger                *utils.Logger
+	Config                *utils.Config
 	PingService           *PingService
 	AbobonArticlesService *AbobonArticlesService
 	ThesisService         *ThesisService
 }
 
-func NewDiscordService(logger *utils.Logger) *DiscordService {
+func NewDiscordService(config *utils.Config, logger *utils.Logger) *DiscordService {
 	return &DiscordService{
+		Config:                config,
 		Logger:                logger,
 		PingService:           NewPingService(logger),
 		AbobonArticlesService: NewAbobonArticlesService(logger),
-		ThesisService:         NewThesisService(logger),
+		ThesisService:         NewThesisService(config, logger),
 	}
 }
 
